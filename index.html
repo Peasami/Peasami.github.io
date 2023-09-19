@@ -20,7 +20,7 @@
       <h1>main</h1>
       <div id="champSelectForm">
         <fieldset>
-          <select name="championSelect" id="championSelect">
+          <select name="championSelectA" id="championSelectA">
             <option value="Aatrox">Aatrox</option>
           </select><br>
           <h4>Q
@@ -67,23 +67,35 @@
               <option value="6">6</option>
             </select>
           </h4>
-          <button type="button" onclick="getChampionStats()">Get stats</button>
+          <button type="button" onclick="getChampionStats('championSelectA')">Get stats</button>
         </fieldset>
         <fieldset>
-          <select name="championSelect" id="championSelect">
+          <select name="championSelectD" id="championSelectD">
             <option value="Aatrox">Aatrox</option>
           </select>
           <button type="button" onclick="getChampionStats()">Get stats</button>
         </fieldset>
       </div>
-      <div id="champStatView">
+      <div id="champStatViewA">
         <fieldset>
-          <h2 id="StatsHeader">
+          <h2 id="StatsHeaderA">
             Champion stats:
           </h2>
-          <img id="champImg" src="http://ddragon.leagueoflegends.com/cdn/13.17.1/img/champion/Aatrox.png"
+          <img id="champImgA" src="http://ddragon.leagueoflegends.com/cdn/13.17.1/img/champion/Aatrox.png"
             alt="champImage">
-          <ul id="stats">
+          <ul id="statsA">
+            <li>waiting for stats...</li>
+          </ul>
+        </fieldset>
+      </div>
+      <div id="champStatViewD">
+        <fieldset>
+          <h2 id="StatsHeaderD">
+            Champion stats:
+          </h2>
+          <img id="champImgD" src="http://ddragon.leagueoflegends.com/cdn/13.17.1/img/champion/Aatrox.png"
+            alt="champImage">
+          <ul id="statsD">
             <li>waiting for stats...</li>
           </ul>
         </fieldset>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Santeri webpage</title>
+  <link href="./resources/css/index.css" type="text/css" rel="stylesheet">
+  <script type="text/javascript" src="./resources/js/index.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1 id="name">Santeri Hyry</h1>
+    </header>
+    <aside>
+      <button onclick="document.location='page2.html'">Click here</button>
+    </aside>
+    <main>
+      <h1>main</h1>
+      <div id="champSelectForm">
+        <fieldset>
+          <select name="championSelect" id="championSelect">
+            <option value="Aatrox">Aatrox</option>
+          </select><br>
+          <h4>Q
+            <select name="QSelect" id="QSelect">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+          </h4>
+          <h4>W
+            <select name="WSelect" id="WSelect">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+          </h4>
+          <h4>E
+            <select name="ESelect" id="ESelect">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+          </h4>
+          <h4>R
+            <select name="RSelect" id="RSelect">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+          </h4>
+          <button type="button" onclick="getChampionStats()">Get stats</button>
+        </fieldset>
+        <fieldset>
+          <select name="championSelect" id="championSelect">
+            <option value="Aatrox">Aatrox</option>
+          </select>
+          <button type="button" onclick="getChampionStats()">Get stats</button>
+        </fieldset>
+      </div>
+      <div id="champStatView">
+        <fieldset>
+          <h2 id="StatsHeader">
+            Champion stats:
+          </h2>
+          <img id="champImg" src="http://ddragon.leagueoflegends.com/cdn/13.17.1/img/champion/Aatrox.png"
+            alt="champImage">
+          <ul id="stats">
+            <li>waiting for stats...</li>
+          </ul>
+        </fieldset>
+      </div>
+    </main>
+    <footer>
+
+    </footer>
+  </div>
+
+
+
+</body>
+
+</html>

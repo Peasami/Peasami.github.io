@@ -1,0 +1,108 @@
+/* CSS styles */
+
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  width: 100%;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: 100px auto 100px;
+  margin: 0 auto;
+}
+
+header {
+  background-color: lightblue;
+  grid-column-start: 1;
+  grid-column-end: 13;
+}
+
+aside {
+  background-color: lightseagreen;
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 2;
+  grid-row-end: 3;
+}
+
+main {
+  background-color: lightcoral;
+  grid-column-start: 3;
+  grid-column-end: 13;
+  grid-row-start: 2;
+  grid-row-end: 3;
+}
+
+footer {
+  background-color: lightgreen;
+  grid-column-start: 1;
+  grid-column-end: 13;
+}
+
+h1 {
+  font-family: Impact, sans-serif;
+  color: #CE5937;
+}
+#name{
+  color: #aa1919;
+  text-align: center;
+}
+button{
+  color: rgb(255, 255, 255);
+  font-size: 16px;
+  line-height: 16px;
+  padding: 6px;
+  font-family: Georgia, serif;
+  font-weight: normal;
+  text-decoration: none;
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+  background-image: linear-gradient(45deg, rgb(28, 110, 164) 0%, rgb(35, 136, 203) 100%, rgb(20, 78, 117) 100%);
+  border: 2px solid rgb(28, 110, 164);
+  display: inline-block;
+  width: 100%;
+}
+button:hover {
+  background: #1C6EA4; 
+}
+button:active {
+  background: #144E75; 
+}
+
+select{
+  margin: 2px;
+}
+
+#champImg{
+  width: auto;
+  height: auto;
+  display: block;
+  margin-left: 0;
+  margin-right: auto;
+  border: 2px solid black;
+  border-radius: 5px;
+}
+
+#champSelectForm{
+  width: 30%;
+  float: left;
+}
+
+#champStatView {
+  width: 30%;
+  float: left;
+}
+
+@media only screen and (max-width: 750px) {
+  #champSelectForm{
+    width: 100%;
+    float: left;
+  }
+  #champStatView {
+    width: 100%;
+    float: left;
+  }
+}

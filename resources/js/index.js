@@ -2,7 +2,6 @@
 
 var championApiUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion.json";
 var selectedChampion = "Aatrox";
-var getStatsBtn = document.getElementById("getStatsBtn");
 var statsA;
 var statsD;
 
@@ -17,17 +16,18 @@ async function getapi(url) {
     }
 }
 
-function displayStats(){
+function displayStats(elementId){
     let html = "";
-    html += "<li>Attack Damage: " + statsA.attackdamage + "</li>";
-    html += "<li>Attack Range: " + statsA.attackrange + "</li>";
-    html += "<li>Attack Speed: " + statsA.attackspeed + "</li>";
-    html += "<li>Armor: " + statsA.armor + "</li>";
-    html += "<li>Health: " + statsA.hp + "</li>";
-    html += "<li>Health Regen: " + statsA.hpregen + "</li>";
-    html += "<li>Magic Resist: " + statsA.spellblock + "</li>";
+    let stats;
+    html += "<li>Attack Damage: " + stats.attackdamage + "</li>";
+    html += "<li>Attack Range: " + stats.attackrange + "</li>";
+    html += "<li>Attack Speed: " + stats.attackspeed + "</li>";
+    html += "<li>Armor: " + stats.armor + "</li>";
+    html += "<li>Health: " + stats.hp + "</li>";
+    html += "<li>Health Regen: " + stats.hpregen + "</li>";
+    html += "<li>Magic Resist: " + stats.spellblock + "</li>";
 
-    document.getElementById("statsA").innerHTML = html;
+    document.getElementById(elementId).innerHTML = html;
 }
 
 
@@ -38,22 +38,34 @@ function getChampionNames(data){
         champOptions += "<option value='" + champion + "'>" + champion + "</option>";
     }
     document.getElementById("championSelectA").innerHTML = champOptions;
+    document.getElementById("championSelectD").innerHTML = champOptions;
 }
 
-function setChampImg(imgUrl){
-    document.getElementById("champImgA").src = imgUrl;
+function setChampImg(imgUrl, elementId){
+    document.getElementById(elementId).src = imgUrl;
 }
 
-function getChampionStats(){
+function getChampionStatsA(){
     let dataUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion/" + document.getElementById("championSelectA").value + ".json";
-    console.log(dataUrl);
     getapi(dataUrl)
     .then(data => parseStatsJson(data))
-    .then(() => displayStats())
+    .then(() => displayStats("statsA"))
     .catch(error => console.log(error));
 
     let imgUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/img/champion/" + document.getElementById("championSelectA").value + ".png";
-    setChampImg(imgUrl);
+    setChampImg(imgUrl, "champImgA");
+    console.log(imgUrl);
+}
+
+function getChampionStatsD(){
+    let dataUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion/" + document.getElementById("championSelectD").value + ".json";
+    getapi(dataUrl)
+    .then(data => parseStatsJson(data))
+    .then(() => displayStats("statsD"))
+    .catch(error => console.log(error));
+
+    let imgUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/img/champion/" + document.getElementById("championSelectD").value + ".png";
+    setChampImg(imgUrl, "champImgD");
     console.log(imgUrl);
 }
 
@@ -65,5 +77,9 @@ function parseStatsJson(champData){
 
 getapi(championApiUrl)
 .then(data => getChampionNames(data))
-.catch(error => console.log(error));
+.catch(error => console.log("cannot get champion names: ", error));
+
+//console.log("myBtn: ", document.getElementById("myBtn"));
+document.getElementById("getAStatsBtn").addEventListener("click", getChampionStatsA);
+document.getElementById("getDStatsBtn").addEventListener("click", getChampionStatsD);
 

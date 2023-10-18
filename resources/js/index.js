@@ -16,16 +16,15 @@ async function getapi(url) {
     }
 }
 
-function displayStats(elementId){
+function displayStats(elementId, chosenStat){
     let html = "";
-    let stats;
-    html += "<li>Attack Damage: " + stats.attackdamage + "</li>";
-    html += "<li>Attack Range: " + stats.attackrange + "</li>";
-    html += "<li>Attack Speed: " + stats.attackspeed + "</li>";
-    html += "<li>Armor: " + stats.armor + "</li>";
-    html += "<li>Health: " + stats.hp + "</li>";
-    html += "<li>Health Regen: " + stats.hpregen + "</li>";
-    html += "<li>Magic Resist: " + stats.spellblock + "</li>";
+    html += "<li>Attack Damage: " + chosenStat.attackdamage + "</li>";
+    html += "<li>Attack Range: " + chosenStat.attackrange + "</li>";
+    html += "<li>Attack Speed: " + chosenStat.attackspeed + "</li>";
+    html += "<li>Armor: " + chosenStat.armor + "</li>";
+    html += "<li>Health: " + chosenStat.hp + "</li>";
+    html += "<li>Health Regen: " + chosenStat.hpregen + "</li>";
+    html += "<li>Magic Resist: " + chosenStat.spellblock + "</li>";
 
     document.getElementById(elementId).innerHTML = html;
 }
@@ -49,7 +48,7 @@ function getChampionStatsA(){
     let dataUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion/" + document.getElementById("championSelectA").value + ".json";
     getapi(dataUrl)
     .then(data => parseStatsJson(data))
-    .then(() => displayStats("statsA"))
+    .then(() => displayStats("statsA", statsA))
     .catch(error => console.log(error));
 
     let imgUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/img/champion/" + document.getElementById("championSelectA").value + ".png";
@@ -61,7 +60,7 @@ function getChampionStatsD(){
     let dataUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion/" + document.getElementById("championSelectD").value + ".json";
     getapi(dataUrl)
     .then(data => parseStatsJson(data))
-    .then(() => displayStats("statsD"))
+    .then(() => displayStats("statsD", statsD))
     .catch(error => console.log(error));
 
     let imgUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/img/champion/" + document.getElementById("championSelectD").value + ".png";

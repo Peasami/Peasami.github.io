@@ -1,11 +1,50 @@
 // JavaScript
 
+// Initial variables
 var championApiUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion.json";
-var selectedChampion = "Aatrox";
+
+// enums for attacker and defender roles
+const ROLES = {
+    attacker: 0,
+    defender: 1
+}
+
+const attacker = {
+    nameElement: "championSelectA",
+    statsElement: "statsA",
+    imgElement: "champImgA",
+    buttonElement: "getAStatsBtn",
+    role: ROLES.attacker
+}
+
+const defender = {
+    nameElement: "championSelectD",
+    statsElement: "statsD",
+    imgElement: "champImgD",
+    buttonElement: "getDStatsBtn",
+    role: ROLES.defender
+}
+
+// Stats of attacker and defender are stored in these global variables
 var statsA;
 var statsD;
 
+// sets stats of given role to given stats
+function setStatsVariable(roleEnum, stats){
+    switch(roleEnum){
+        case ROLES.attacker:
+            statsA = stats;
+            break;
+        case ROLES.defender:
+            statsD = stats;
+            break;
+        default:
+            console.log("invalid role");
+    }
+}
 
+
+// Returns the api data from the url
 async function getapi(url) {
     try {
         let response = await fetch(url);
@@ -16,6 +55,8 @@ async function getapi(url) {
     }
 }
 
+// Displays stats of given chosenStat object in element with given elementId
+// chosenStat is either statsA or statsD
 function displayStats(elementId, chosenStat){
     let html = "";
     html += "<li>Attack Damage: " + chosenStat.attackdamage + "</li>";
@@ -31,6 +72,7 @@ function displayStats(elementId, chosenStat){
 
 
 
+// Gets champion names from api and displays them in the select elements
 function getChampionNames(data){
     let champOptions = "";
     for (let champion in data.data){
@@ -40,45 +82,48 @@ function getChampionNames(data){
     document.getElementById("championSelectD").innerHTML = champOptions;
 }
 
-function setChampImg(imgUrl, elementId){
-    document.getElementById(elementId).src = imgUrl;
+// Sets image from imgUrl to elementId element
+function setChampImg(imgElementId, imgUrl){
+    document.getElementById(imgElementId).src = imgUrl;
 }
 
-function getChampionStatsA(){
-    let dataUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion/" + document.getElementById("championSelectA").value + ".json";
+// Gets a single champion's stats and image from api and displays them
+// champNameElementId is the id of the select element where the champion name is taken from
+// statsElementId is the id of the element where the stats are displayed
+// champImgElementId is the id of the img element where the champion image is displayed
+function getChampionStats(role){
+    let champName = document.getElementById(role.nameElement).value;
+    let dataUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion/" + champName + ".json";
+    let imgUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/img/champion/" + champName + ".png";
+
+    console.log(role.statsElement)
+    // Get api from created url
     getapi(dataUrl)
-    .then(data => parseStatsJson(data))
-    .then(() => displayStats("statsA", statsA))
+    .then(data => parseStatsJson(data, role.statsElement))// Then send api to parseStatsJson
+    .then(selectStats => setStatsVariable(role.role, selectStats))// Then set stats of attacker or defender
+    .then(selectStats => displayStats(role.statsElement, selectStats))// Then display stats of attacker
     .catch(error => console.log(error));
-
-    let imgUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/img/champion/" + document.getElementById("championSelectA").value + ".png";
-    setChampImg(imgUrl, "champImgA");
-    console.log(imgUrl);
+    // Set image of champion from created url
+    setChampImg(role.imgElement, imgUrl);
 }
 
-function getChampionStatsD(){
-    let dataUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion/" + document.getElementById("championSelectD").value + ".json";
-    getapi(dataUrl)
-    .then(data => parseStatsJson(data))
-    .then(() => displayStats("statsD", statsD))
-    .catch(error => console.log(error));
-
-    let imgUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/img/champion/" + document.getElementById("championSelectD").value + ".png";
-    setChampImg(imgUrl, "champImgD");
-    console.log(imgUrl);
+// returns stats of champion from given champData
+// champData is the data of the champion from the api
+// elementId is the id of element where the champion name is taken from
+function parseStatsJson(champData, nameElementId){
+    return champData.data[document.getElementById(nameElementId).value].stats;
 }
 
-function parseStatsJson(champData){
-    statsA = champData.data[document.getElementById("championSelectA").value].stats;
-    statsD = champData.data[document.getElementById("championSelectD").value].stats;
-}
-
-
-getapi(championApiUrl)
-.then(data => getChampionNames(data))
+// Initial function calls
+getapi(championApiUrl) // Get api of initial url
+.then(data => getChampionNames(data)) // Then get champion names from returned api and display them
 .catch(error => console.log("cannot get champion names: ", error));
 
-//console.log("myBtn: ", document.getElementById("myBtn"));
-document.getElementById("getAStatsBtn").addEventListener("click", getChampionStatsA);
-document.getElementById("getDStatsBtn").addEventListener("click", getChampionStatsD);
+// Event listeners
+document.getElementById(attacker.buttonElement).addEventListener("click", () => {
+    getChampionStats(attacker);
+});
+document.getElementById(defender.buttonElement).addEventListener("click", () => {
+    getChampionStats(defender);
+});
 

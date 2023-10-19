@@ -9,12 +9,18 @@ const ROLES = {
     defender: 1
 }
 
+
+// store all relevant variables for attacker and defender in objects
 const attacker = {
     nameElement: "championSelectA",
     statsElement: "statsA",
     imgElement: "champImgA",
     buttonElement: "getAStatsBtn",
-    role: ROLES.attacker
+    role: ROLES.attacker,
+    baseStats: {},
+    currentStats: {},
+    level: 1,
+    items: []
 }
 
 const defender = {
@@ -22,25 +28,41 @@ const defender = {
     statsElement: "statsD",
     imgElement: "champImgD",
     buttonElement: "getDStatsBtn",
-    role: ROLES.defender
+    role: ROLES.defender,
+    baseStats: {},
+    currentStats: {},
+    level: 1,
+    items: []
 }
 
-// Stats of attacker and defender are stored in these global variables
-var statsA;
-var statsD;
+// updates currentStats to match their level
+function setCurrentStats(role){
+    role.currentStats.attackdamage = role.baseStats.attackdamage + (role.baseStats.attackdamageperlevel * (role.level - 1));
+    role.currentStats.attackrange = role.baseStats.attackrange;
+    role.currentStats.attackspeed = role.baseStats.attackspeed + (role.baseStats.attackspeedperlevel * (role.level - 1));
+    role.currentStats.armor = role.baseStats.armor + (role.baseStats.armorperlevel * (role.level - 1));
+    role.currentStats.hp = role.baseStats.hp + (role.baseStats.hpperlevel * (role.level - 1));
+    role.currentStats.hpregen = role.baseStats.hpregen + (role.baseStats.hpregenperlevel * (role.level - 1));
+    role.currentStats.spellblock = role.baseStats.spellblock + (role.baseStats.spellblockperlevel * (role.level - 1));
+    console.log(role.currentStats);
+}
 
-// sets stats of given role to given stats
-function setStatsVariable(roleEnum, stats){
-    switch(roleEnum){
-        case ROLES.attacker:
-            statsA = stats;
-            break;
-        case ROLES.defender:
-            statsD = stats;
-            break;
-        default:
-            console.log("invalid role");
-    }
+// sets baseStats of attacker or defender
+function setStatsVariable(role, stats){
+    role.baseStats.attackdamage = stats.attackdamage;
+    role.baseStats.attackdamageperlevel = stats.attackdamageperlevel;
+    role.baseStats.attackrange = stats.attackrange;
+    role.baseStats.attackspeed = stats.attackspeed;
+    role.baseStats.attackspeedperlevel = stats.attackspeedperlevel;
+    role.baseStats.armor = stats.armor;
+    role.baseStats.armorperlevel = stats.armorperlevel;
+    role.baseStats.hp = stats.hp;
+    role.baseStats.hpperlevel = stats.hpperlevel;
+    role.baseStats.hpregen = stats.hpregen;
+    role.baseStats.hpregenperlevel = stats.hpregenperlevel;
+    role.baseStats.spellblock = stats.spellblock;
+    role.baseStats.spellblockperlevel = stats.spellblockperlevel;
+    setCurrentStats(role);
 }
 
 
@@ -96,18 +118,21 @@ function getChampionStats(role){
     let dataUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion/" + champName + ".json";
     let imgUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/img/champion/" + champName + ".png";
 
-    console.log(role.statsElement)
     // Get api from created url
     getapi(dataUrl)
-    .then(data => parseStatsJson(data, role.statsElement))// Then send api to parseStatsJson
-    .then(selectStats => setStatsVariable(role.role, selectStats))// Then set stats of attacker or defender
-    .then(selectStats => displayStats(role.statsElement, selectStats))// Then display stats of attacker
+    .then(data => parseStatsJson(data, role.nameElement))// Then send api to parseStatsJson, return stats JSON
+    .then(statsJSON => { // Then set stats for attacker or defender
+        setStatsVariable(role, statsJSON); 
+        return statsJSON;
+    })
+    .then(statsJSON => displayStats(role.statsElement, statsJSON))// Then display stats of attacker
     .catch(error => console.log(error));
+
     // Set image of champion from created url
     setChampImg(role.imgElement, imgUrl);
 }
 
-// returns stats of champion from given champData
+// returns stats part of JSON of champion from given champData
 // champData is the data of the champion from the api
 // elementId is the id of element where the champion name is taken from
 function parseStatsJson(champData, nameElementId){

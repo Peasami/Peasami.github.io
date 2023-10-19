@@ -36,7 +36,7 @@ const defender = {
 }
 
 // updates currentStats to match their level
-function setCurrentStats(role){
+async function setCurrentStats(role){
     role.currentStats.attackdamage = role.baseStats.attackdamage + (role.baseStats.attackdamageperlevel * (role.level - 1));
     role.currentStats.attackrange = role.baseStats.attackrange;
     role.currentStats.attackspeed = role.baseStats.attackspeed + (role.baseStats.attackspeedperlevel * (role.level - 1));
@@ -44,7 +44,6 @@ function setCurrentStats(role){
     role.currentStats.hp = role.baseStats.hp + (role.baseStats.hpperlevel * (role.level - 1));
     role.currentStats.hpregen = role.baseStats.hpregen + (role.baseStats.hpregenperlevel * (role.level - 1));
     role.currentStats.spellblock = role.baseStats.spellblock + (role.baseStats.spellblockperlevel * (role.level - 1));
-    console.log(role.currentStats);
 }
 
 // sets baseStats of attacker or defender
@@ -62,7 +61,6 @@ function setStatsVariable(role, stats){
     role.baseStats.hpregenperlevel = stats.hpregenperlevel;
     role.baseStats.spellblock = stats.spellblock;
     role.baseStats.spellblockperlevel = stats.spellblockperlevel;
-    setCurrentStats(role);
 }
 
 
@@ -139,6 +137,12 @@ function parseStatsJson(champData, nameElementId){
     return champData.data[document.getElementById(nameElementId).value].stats;
 }
 
+// Called when calculate button is pressed
+function onCalculateButton(role){
+    setCurrentStats(role)
+    .then (() => console.log(role.currentStats))
+}
+
 // Initial function calls
 getapi(championApiUrl) // Get api of initial url
 .then(data => getChampionNames(data)) // Then get champion names from returned api and display them
@@ -146,9 +150,15 @@ getapi(championApiUrl) // Get api of initial url
 
 // Event listeners
 document.getElementById(attacker.buttonElement).addEventListener("click", () => {
-    getChampionStats(attacker);
+    onCalculateButton(attacker);
 });
 document.getElementById(defender.buttonElement).addEventListener("click", () => {
-    getChampionStats(defender);
+    onCalculateButton(defender);
 });
 
+document.getElementById("championSelectA").addEventListener("change", () => {
+    getChampionStats(attacker);
+});
+document.getElementById("championSelectD").addEventListener("change", () => {
+    getChampionStats(defender);
+});

@@ -9,6 +9,13 @@ const ROLES = {
     defender: 1
 }
 
+const ABILITIES = {
+    Q: 0,
+    W: 1,
+    E: 2,
+    R: 3
+}
+
 
 // store all relevant variables for attacker and defender in objects
 const attacker = {
@@ -16,10 +23,12 @@ const attacker = {
     statsElement: "statsA",
     imgElement: "champImgA",
     buttonElement: "getAStatsBtn",
+    levelElement: "totalLevelA",
     role: ROLES.attacker,
     baseStats: {},
     currentStats: {},
     level: 1,
+    abilityLevels: [0, 0, 0, 0],
     items: []
 }
 
@@ -32,7 +41,20 @@ const defender = {
     baseStats: {},
     currentStats: {},
     level: 1,
+    abilityLevels: [0, 0, 0, 0],
     items: []
+}
+
+// sets ability level
+// sets total level
+async function setAbilityLevel(ability, num, role){
+    role.abilityLevels[ability] = num;
+    role.level = role.abilityLevels.reduce((a, b) => a + b, 0); // sums all elements in array
+    console.log(role.level);
+}
+
+async function displayLevel(role){
+    document.getElementById(role.levelElement).innerHTML = role.level;
 }
 
 // updates currentStats to match their level
@@ -137,11 +159,13 @@ function parseStatsJson(champData, nameElementId){
     return champData.data[document.getElementById(nameElementId).value].stats;
 }
 
-// Called when calculate button is pressed
 function onCalculateButton(role){
     setCurrentStats(role)
     .then (() => console.log(role.currentStats))
 }
+
+var attackerAbilities = document.getElementsByClassName("abilitySelectA");
+var defenderAbilities = document.getElementsByClassName("abilitySelectD");
 
 // Initial function calls
 getapi(championApiUrl) // Get api of initial url
@@ -162,3 +186,16 @@ document.getElementById("championSelectA").addEventListener("change", () => {
 document.getElementById("championSelectD").addEventListener("change", () => {
     getChampionStats(defender);
 });
+
+for (let i = 0; i < attackerAbilities.length; i++){
+    attackerAbilities[i].addEventListener("change", () => {
+        setAbilityLevel(i, parseInt(attackerAbilities[i].value), attacker)
+        .then(() => displayLevel(attacker));
+    });
+}
+for (let i = 0; i < defenderAbilities.length; i++){
+    defenderAbilities[i].addEventListener("change", () => {
+        setAbilityLevel(i, parseInt(defenderAbilities[i].value), defender)
+        .then(() => displayLevel(defender));
+    });
+}

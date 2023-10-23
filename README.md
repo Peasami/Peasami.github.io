@@ -2,7 +2,6 @@
 
 ## HTML
 Basic structure is present\
-Clear content differentation\
 Use of forms, links, and media
 
 ## CSS
@@ -18,4 +17,11 @@ Advanced logic, looping through ata, and dynamic DOM updates
 
 ## Asynchronous operations
 Implementation of Fetch\
-Data from async call is displayed
+Data from async call is displayed\
+Error handling is displayed
+
+# Calculator
+
+Gets data of playable characters from the game "league of legends" from Riot's "datadragon" api. Can calculate damage per attack, hits to kill and time to kill, based on levels of attacker and defender.
+
+Item selection is not implemented.

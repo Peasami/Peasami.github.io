@@ -3,6 +3,8 @@
 // Initial variables
 var itemsData;
 var championApiUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion.json";
+var attackerAbilities = document.getElementsByClassName("abilitySelectA");
+var defenderAbilities = document.getElementsByClassName("abilitySelectD");
 
 // enums for attacker and defender roles
 const ROLES = {
@@ -26,9 +28,9 @@ const attacker = {
     buttonElement: "getAStatsBtn",
     levelElement: "totalLevelA",
     role: ROLES.attacker,
-    baseStats: {},
-    currentStats: {},
-    level: 1,
+    baseStats: {}, // base stats without levels, abilities, or items
+    currentStats: {}, // stats with levels
+    level: 0,
     abilityLevels: [0, 0, 0, 0],
     items: []
 }
@@ -38,10 +40,11 @@ const defender = {
     statsElement: "statsD",
     imgElement: "champImgD",
     buttonElement: "getDStatsBtn",
+    levelElement: "totalLevelD",
     role: ROLES.defender,
     baseStats: {},
     currentStats: {},
-    level: 1,
+    level: 0,
     abilityLevels: [0, 0, 0, 0],
     items: []
 }
@@ -60,13 +63,16 @@ async function displayLevel(role){
 
 // updates currentStats to match their level
 async function setCurrentStats(role){
-    role.currentStats.attackdamage = role.baseStats.attackdamage + (role.baseStats.attackdamageperlevel * (role.level - 1));
+    role.currentStats.attackdamage = role.baseStats.attackdamage + (role.baseStats.attackdamageperlevel) * role.level;
     role.currentStats.attackrange = role.baseStats.attackrange;
-    role.currentStats.attackspeed = role.baseStats.attackspeed + (role.baseStats.attackspeedperlevel * (role.level - 1));
-    role.currentStats.armor = role.baseStats.armor + (role.baseStats.armorperlevel * (role.level - 1));
-    role.currentStats.hp = role.baseStats.hp + (role.baseStats.hpperlevel * (role.level - 1));
-    role.currentStats.hpregen = role.baseStats.hpregen + (role.baseStats.hpregenperlevel * (role.level - 1));
-    role.currentStats.spellblock = role.baseStats.spellblock + (role.baseStats.spellblockperlevel * (role.level - 1));
+    // weird formula for attackspeed provided by leagueoflegeds fandom wiki
+    role.currentStats.attackspeed = role.baseStats.attackspeed + (role.baseStats.attackspeedperlevel * role.level * (0.7025 + 0.0175 * (role.level))) * role.baseStats.attackspeed;
+    console.log("attackspeed calculus: ", role.currentStats.attackspeed);
+    role.currentStats.armor = role.baseStats.armor + (role.baseStats.armorperlevel) * role.level;
+    role.currentStats.hp = role.baseStats.hp + (role.baseStats.hpperlevel) * role.level;
+    role.currentStats.hpregen = role.baseStats.hpregen + (role.baseStats.hpregenperlevel) * role.level;
+    role.currentStats.spellblock = role.baseStats.spellblock + (role.baseStats.spellblockperlevel) * role.level;
+    console.log(role.currentStats);
 }
 
 // sets baseStats of attacker or defender
@@ -98,21 +104,34 @@ async function getapi(url) {
     }
 }
 
-// Displays stats of given chosenStat object in element with given elementId
-// chosenStat is either statsA or statsD
-function displayStats(elementId, chosenStat){
+// displays base stats of role
+function displayStats(role){
     let html = "";
-    html += "<li>Attack Damage: " + chosenStat.attackdamage + "</li>";
-    html += "<li>Attack Range: " + chosenStat.attackrange + "</li>";
-    html += "<li>Attack Speed: " + chosenStat.attackspeed + "</li>";
-    html += "<li>Armor: " + chosenStat.armor + "</li>";
-    html += "<li>Health: " + chosenStat.hp + "</li>";
-    html += "<li>Health Regen: " + chosenStat.hpregen + "</li>";
-    html += "<li>Magic Resist: " + chosenStat.spellblock + "</li>";
+    html += "<li>Attack Damage: " + role.baseStats.attackdamage + "</li>";
+    html += "<li>Attack Range: " + role.baseStats.attackrange + "</li>";
+    html += "<li>Attack Speed: " + role.baseStats.attackspeed + "</li>";
+    html += "<li>Armor: " + role.baseStats.armor + "</li>";
+    html += "<li>Health: " + role.baseStats.hp + "</li>";
+    html += "<li>Health Regen: " + role.baseStats.hpregen + "</li>";
+    html += "<li>Magic Resist: " + role.baseStats.spellblock + "</li>";
 
-    document.getElementById(elementId).innerHTML = html;
+    document.getElementById(role.statsElement).innerHTML = html;
 }
 
+
+
+function setItems(data){
+    let itemOptions = "";
+    console.log(data.items);
+    data.items.forEach(item => {
+        itemOptions += "<option value='" + item.name + "'>" + item.name + "</option>";
+    });
+
+    var itemSelectElements = document.getElementsByClassName("itemSelect");
+    for (var i = 0; i < itemSelectElements.length; i++) {
+        itemSelectElements[i].innerHTML = itemOptions;
+    }
+}
 
 
 // Gets champion names from api and displays them in the select elements
@@ -134,7 +153,7 @@ function setChampImg(imgElementId, imgUrl){
 // champNameElementId is the id of the select element where the champion name is taken from
 // statsElementId is the id of the element where the stats are displayed
 // champImgElementId is the id of the img element where the champion image is displayed
-function getChampionStats(role){
+async function getChampionStats(role){
     let champName = document.getElementById(role.nameElement).value;
     let dataUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion/" + champName + ".json";
     let imgUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/img/champion/" + champName + ".png";
@@ -144,14 +163,32 @@ function getChampionStats(role){
     .then(data => parseStatsJson(data, role.nameElement))// Then send api to parseStatsJson, return stats JSON
     .then(statsJSON => { // Then set stats for attacker or defender
         setStatsVariable(role, statsJSON); 
-        return statsJSON;
     })
-    .then(statsJSON => displayStats(role.statsElement, statsJSON))// Then display stats of attacker
+    .then(() => displayStats(role))// Then display stats of attacker
+    .then(() => setCurrentStats(role)) // Then set current stats of attacker
+    .then(() => console.log(role.baseStats)) // Then log current stats of attacker
     .catch(error => console.log(error));
 
     // Set image of champion from created url
     setChampImg(role.imgElement, imgUrl);
 }
+
+
+function calculateDamage(){
+    let damagePerAttack = attacker.currentStats.attackdamage / (1 + defender.currentStats.armor / 100);
+    document.getElementById("dmgPerAutoValue").innerHTML = damagePerAttack;
+    let hitsToKill = Math.ceil(defender.currentStats.hp / damagePerAttack);
+    document.getElementById("htkValue").innerHTML = hitsToKill;
+    let timeToKill = hitsToKill / (attacker.currentStats.attackspeed);
+    console.log("Attacker atkspeed: ",attacker.currentStats.attackspeed);
+    console.log("attacker attackspeed per level: ",attacker.baseStats.attackspeedperlevel);
+    console.log("Attacker level: ",attacker.level);
+    document.getElementById("ttkValue").innerHTML = timeToKill;
+    console.log(attacker.currentStats.attackdamage);
+    console.log(defender.currentStats.armor);
+    console.log(damagePerAttack);
+}
+
 
 // returns stats part of JSON of champion from given champData
 // champData is the data of the champion from the api
@@ -162,28 +199,29 @@ function parseStatsJson(champData, nameElementId){
 
 function onCalculateButton(role){
     setCurrentStats(role)
-    .then (() => console.log(role.currentStats))
+    .then (() => calculateDamage())
 }
 
-var attackerAbilities = document.getElementsByClassName("abilitySelectA");
-var defenderAbilities = document.getElementsByClassName("abilitySelectD");
+
 
 // Initial function calls
 fetch('resources/js/items.json')
-.then(response => itemsData = response.json())
+.then(response => response.json())
+.then(data => setItems(data))
 .catch(error => console.log(error));
+
+
 
 getapi(championApiUrl) // Get api of initial url
 .then(data => getChampionNames(data)) // Then get champion names from returned api and display them
+.then(() => getChampionStats(attacker)) // Then get stats of attacker
+.then(() => getChampionStats(defender)) // Then get stats of defender
 .catch(error => console.log("cannot get champion names: ", error));
 
 
 // Event listeners
 document.getElementById(attacker.buttonElement).addEventListener("click", () => {
-    onCalculateButton(attacker);
-});
-document.getElementById(defender.buttonElement).addEventListener("click", () => {
-    onCalculateButton(defender);
+    calculateDamage();
 });
 
 document.getElementById("championSelectA").addEventListener("change", () => {
@@ -196,12 +234,14 @@ document.getElementById("championSelectD").addEventListener("change", () => {
 for (let i = 0; i < attackerAbilities.length; i++){
     attackerAbilities[i].addEventListener("change", () => {
         setAbilityLevel(i, parseInt(attackerAbilities[i].value), attacker)
+        .then(() => setCurrentStats(attacker))
         .then(() => displayLevel(attacker));
     });
 }
 for (let i = 0; i < defenderAbilities.length; i++){
     defenderAbilities[i].addEventListener("change", () => {
         setAbilityLevel(i, parseInt(defenderAbilities[i].value), defender)
+        .then(() => setCurrentStats(defender))
         .then(() => displayLevel(defender));
     });
 }

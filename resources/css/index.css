@@ -83,6 +83,15 @@ select{
   margin: 2px;
 }
 
+#results{
+  width: 50%;
+  height: 100%;
+  margin-left: 10px;
+  margin-right: 10px;
+  border: 2px solid black;
+  border-radius: 5px;
+}
+
 #champImg{
   width: auto;
   height: auto;
@@ -93,7 +102,7 @@ select{
   border-radius: 5px;
 }
 
-#champSelectForm{
+.champSelectForm{
   width: 30%;
   float: left;
 }
@@ -103,12 +112,34 @@ select{
   float: left;
 }
 
+.addItemButton{
+  width: 100%;
+  float: left;
+  color: #aa1919;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
 @media only screen and (max-width: 750px) {
-  #champSelectForm{
+  .champSelectForm{
     width: 100%;
     float: left;
   }
-  #champStatView {
+  .champStatView {
     width: 100%;
     float: left;
   }

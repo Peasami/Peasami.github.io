@@ -1,6 +1,7 @@
 // JavaScript
 
 // Initial variables
+var itemsData;
 var championApiUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion.json";
 
 // enums for attacker and defender roles
@@ -168,9 +169,14 @@ var attackerAbilities = document.getElementsByClassName("abilitySelectA");
 var defenderAbilities = document.getElementsByClassName("abilitySelectD");
 
 // Initial function calls
+fetch('resources/js/items.json')
+.then(response => itemsData = response.json())
+.catch(error => console.log(error));
+
 getapi(championApiUrl) // Get api of initial url
 .then(data => getChampionNames(data)) // Then get champion names from returned api and display them
 .catch(error => console.log("cannot get champion names: ", error));
+
 
 // Event listeners
 document.getElementById(attacker.buttonElement).addEventListener("click", () => {

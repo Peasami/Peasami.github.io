@@ -2,7 +2,7 @@
 
 // Initial variables
 var itemsData;
-var championApiUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion.json";
+var championApiUrl = "https://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion.json";
 var attackerAbilities = document.getElementsByClassName("abilitySelectA");
 var defenderAbilities = document.getElementsByClassName("abilitySelectD");
 
@@ -155,8 +155,8 @@ function setChampImg(imgElementId, imgUrl){
 // champImgElementId is the id of the img element where the champion image is displayed
 async function getChampionStats(role){
     let champName = document.getElementById(role.nameElement).value;
-    let dataUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion/" + champName + ".json";
-    let imgUrl = "http://ddragon.leagueoflegends.com/cdn/13.17.1/img/champion/" + champName + ".png";
+    let dataUrl = "https://ddragon.leagueoflegends.com/cdn/13.17.1/data/en_US/champion/" + champName + ".json";
+    let imgUrl = "https://ddragon.leagueoflegends.com/cdn/13.17.1/img/champion/" + champName + ".png";
 
     // Get api from created url
     getapi(dataUrl)
